@@ -1,0 +1,56 @@
+/* Crear un paquete que tenga una función, esta función retornará la cantidad de dietas almacenadas en la base de datos. 
+Luego el paquete también debe contener una función que retorne la descripción de una dieta en específico,
+el código de la dieta se enviará como parámetro de la función.*/
+
+
+CREATE OR REPLACE PACKAGE PK_INF_DIETAS
+IS 
+    FUNCTION FN_CANTIDAD_DIETAS 
+    RETURN NUMBER;
+
+    FUNCTION FN_DESCRIPCION_DIETA (CODIGO_DIETA DIETA.DIETAID%TYPE)
+    RETURN VARCHAR2;
+END;
+
+CREATE OR REPLACE PACKAGE BODY PK_INF_DIETAS
+IS 
+
+------------------------------------------------------------------------------------
+    FUNCTION FN_CANTIDAD_DIETAS 
+    RETURN NUMBER
+    IS
+    CANTIDAD_DIETAS NUMBER;
+    BEGIN 
+    SELECT COUNT(*) INTO CANTIDAD_DIETAS FROM DIETA;
+    RETURN CANTIDAD_DIETAS;
+    END;
+----------------------------------------------------------------
+    FUNCTION FN_DESCRIPCION_DIETA (CODIGO_DIETA DIETA.DIETAID%TYPE)
+    RETURN VARCHAR2
+    IS
+    DESCRIPCION_DIETA DIETA.DESCRIPCION%TYPE;
+    BEGIN 
+        SELECT DESCRIPCION INTO DESCRIPCION_DIETA 
+        FROM DIETA 
+        WHERE DIETAID = CODIGO_DIETA;
+    RETURN DESCRIPCION_DIETA;
+    END;
+END;
+
+
+--BLOQUES ANONIMOS PARA PROBAR EL EJERCICIO ANTERIOR
+--CANTIDAD DE DIETAS
+DECLARE 
+CANTIDAD NUMBER;
+BEGIN 
+    CANTIDAD:=PK_INF_DIETAS.FN_CANTIDAD_DIETAS;
+    DBMS_OUTPUT.PUT_LINE('LA CANTIDAD DE DIETAS ES :'||' ' || CANTIDAD);
+END;
+
+--DESCRIPCION DE DIETAS
+DECLARE 
+    DESCRIPCION DIETA.DESCRIPCION%TYPE;
+BEGIN 
+    DESCRIPCION := PK_INF_DIETAS.FN_DESCRIPCION_DIETA(342567);
+    DBMS_OUTPUT.PUT_LINE('LA DESCRIPCION DE LA DIETA ES:'|| ' ' || DESCRIPCION);
+END;
